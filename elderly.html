@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Google Sheet Table</title>
+
+  <!-- Tabulator CSS -->
+  <link href="https://unpkg.com/tabulator-tables@5.5.2/dist/css/tabulator.min.css" rel="stylesheet">
+  
+  <!-- Tabulator JS -->
+  <script src="https://unpkg.com/tabulator-tables@5.5.2/dist/js/tabulator.min.js"></script>
+</head>
+<body>
+  <h2>My Google Sheet Table</h2>
+  <div id="example-table"></div>
+
+  <script>
+    // Replace the URL below with your published Google Sheet CSV link
+    var sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQw__NC50vYEUseTgmJKrpL3TjhmmJbmD8v3l2uM9CVjtpDmRpwm_DiKZql7Ev1L_9X71Bpz7sOFmWY/pub?gid=682729236&single=true&output=csv";
+
+    var table = new Tabulator("#example-table", {
+      ajaxURL: sheetURL,     // fetch data from Google Sheet
+      autoColumns: true,     // automatically create columns
+      layout: "fitDataFill", // fit columns to table width
+      movableColumns: true,  // allow drag and freeze columns
+      headerFilterPlaceholder: "Filter...", 
+      pagination: "local",   // add pagination
+      paginationSize: 20,    // rows per page
+    });
+  </script>
+</body>
+</html>
