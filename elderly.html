@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
   <meta charset="UTF-8">
-  <title>Google Sheet Table</title>
+  <title>Google Sheet Table with Hyperlinks</title>
 
   <!-- Tabulator CSS -->
   <link href="https://unpkg.com/tabulator-tables@5.5.2/dist/css/tabulator.min.css" rel="stylesheet">
@@ -14,29 +14,35 @@
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 </head>
 <body>
-  <h2>Google Sheet Data</h2>
+  <h2>安老院舍資料表</h2>
   <div id="example-table"></div>
 
   <script>
-    // 🔴 Replace this with your published CSV link
+    // 🔴 Replace this with your published Google Sheet CSV link
     var sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQw__NC50vYEUseTgmJKrpL3TjhmmJbmD8v3l2uM9CVjtpDmRpwm_DiKZql7Ev1L_9X71Bpz7sOFmWY/pub?gid=682729236&single=true&output=csv";
 
     fetch(sheetURL)
       .then(response => response.text())
       .then(csvText => {
-        // Parse CSV into JSON
         var parsed = Papa.parse(csvText, {header: true});
-        
-        // Initialize Tabulator
+
         new Tabulator("#example-table", {
           data: parsed.data,
           layout: "fitDataFill",
-          autoColumns: true,         // generate columns automatically
-          movableColumns: true,      // allow column reordering
-          resizableColumns: true,    // allow resize
+          movableColumns: true,
+          resizableColumns: true,
           headerFilterPlaceholder: "Filter...",
-          pagination: "local",       // enable pagination
-          paginationSize: 20,        // rows per page
+          pagination: "local",
+          paginationSize: 20,
+          columns: [
+            // Auto-generate columns first
+            ...Object.keys(parsed.data[0] || {}).map(col => {
+              if(["收費表鏈結","設備清單鏈結","網站連結"].includes(col)) {
+                return {title: col, field: col, formatter:"link", formatterParams:{target:"_blank"}};
+              }
+              return {title: col, field: col, headerFilter:"input"};
+            })
+          ]
         });
       })
       .catch(error => console.error("Error loading CSV:", error));
