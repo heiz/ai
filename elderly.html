@@ -9,24 +9,37 @@
   
   <!-- Tabulator JS -->
   <script src="https://unpkg.com/tabulator-tables@5.5.2/dist/js/tabulator.min.js"></script>
+  
+  <!-- PapaParse for CSV parsing -->
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 </head>
 <body>
-  <h2>My Google Sheet Table</h2>
+  <h2>Google Sheet Data</h2>
   <div id="example-table"></div>
 
   <script>
-    // Replace the URL below with your published Google Sheet CSV link
+    // 🔴 Replace this with your published CSV link
     var sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQw__NC50vYEUseTgmJKrpL3TjhmmJbmD8v3l2uM9CVjtpDmRpwm_DiKZql7Ev1L_9X71Bpz7sOFmWY/pub?gid=682729236&single=true&output=csv";
 
-    var table = new Tabulator("#example-table", {
-      ajaxURL: sheetURL,     // fetch data from Google Sheet
-      autoColumns: true,     // automatically create columns
-      layout: "fitDataFill", // fit columns to table width
-      movableColumns: true,  // allow drag and freeze columns
-      headerFilterPlaceholder: "Filter...", 
-      pagination: "local",   // add pagination
-      paginationSize: 20,    // rows per page
-    });
+    fetch(sheetURL)
+      .then(response => response.text())
+      .then(csvText => {
+        // Parse CSV into JSON
+        var parsed = Papa.parse(csvText, {header: true});
+        
+        // Initialize Tabulator
+        new Tabulator("#example-table", {
+          data: parsed.data,
+          layout: "fitDataFill",
+          autoColumns: true,         // generate columns automatically
+          movableColumns: true,      // allow column reordering
+          resizableColumns: true,    // allow resize
+          headerFilterPlaceholder: "Filter...",
+          pagination: "local",       // enable pagination
+          paginationSize: 20,        // rows per page
+        });
+      })
+      .catch(error => console.error("Error loading CSV:", error));
   </script>
 </body>
 </html>
