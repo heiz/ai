@@ -34,15 +34,23 @@
           headerFilterPlaceholder: "Filter...",
           pagination: "local",
           paginationSize: 20,
-          columns: [
-            // Auto-generate columns first
-            ...Object.keys(parsed.data[0] || {}).map(col => {
-              if(["收費表鏈結","設備清單鏈結","網站連結"].includes(col)) {
-                return {title: col, field: col, formatter:"link", formatterParams:{target:"_blank"}};
-              }
-              return {title: col, field: col, headerFilter:"input"};
-            })
-          ]
+columns: [
+  ...Object.keys(parsed.data[0] || {}).map((col, i) => {
+    // Make column 2 (index 1, since index starts at 0) frozen
+    if(i === 1){
+      return {title: col, field: col, headerFilter:"input", frozen:true};
+    }
+
+    // Turn 3 specific columns into links
+    if(["收費表鏈結","設備清單鏈結","網站連結"].includes(col)) {
+      return {title: col, field: col, formatter:"link", formatterParams:{target:"_blank"}};
+    }
+
+    // Default for all others
+    return {title: col, field: col, headerFilter:"input"};
+  })
+]
+
         });
       })
       .catch(error => console.error("Error loading CSV:", error));
